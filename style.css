@@ -1,0 +1,34 @@
+/* Custom overrides for SB Admin */
+.option-card {
+  border: 2px solid #e9ecef;
+  padding: 15px;
+  margin: 8px 0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.option-card:hover {
+  border-color: #0d6efd;
+  background-color: #f8f9fc;
+}
+.option-card.selected {
+  background-color: #d1e7dd;
+  border-color: #198754;
+  font-weight: bold;
+}
+
+/* Logo Styling */
+.login-logo-img {
+  width: 140px;
+  height: auto;
+  margin-bottom: 15px;
+}
+.sidebar .brand-logo-img {
+  width: 40px;
+  height: auto;
+  margin-right: 5px;
+}
+.sidebar-brand-text {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
