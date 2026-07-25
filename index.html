@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>SCHOOLAR HUB UG - Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.1.4/css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-primary">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-xl-10 col-lg-12 col-md-9">
+        <div class="card o-hidden border-0 shadow-lg my-5">
+          <div class="card-body p-0">
+            <div class="row">
+              <div class="col-lg-6 d-none d-lg-block bg-login-image" style="background-image: url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'); background-size: cover;"></div>
+              <div class="col-lg-6">
+                <div class="p-5">
+                  <div class="text-center">
+                    <h1 class="h4 text-gray-900 mb-4">Welcome to SCHOOLAR HUB UG!</h1>
+                  </div>
+                  <ul class="nav nav-pills nav-justified mb-4">
+                    <li class="nav-item"><a class="nav-link active" data-toggle="pill" href="#login">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="pill" href="#register">Register</a></li>
+                  </ul>
+                  <div class="tab-content">
+                    <div id="login" class="tab-pane fade show active">
+                      <form id="loginForm">
+                        <div class="form-group"><input type="text" class="form-control form-control-user" id="lUsername" placeholder="Username / Email" required></div>
+                        <div class="form-group"><input type="password" class="form-control form-control-user" id="lPassword" placeholder="Password" required></div>
+                        <div class="form-group"><input type="text" class="form-control form-control-user" id="lSchoolCode" placeholder="School Link/Code (Leave blank for Dev)"></div>
+                        <button class="btn btn-primary btn-user btn-block">Login</button>
+                      </form>
+                    </div>
+                    <div id="register" class="tab-pane fade">
+                      <form id="regForm">
+                        <div class="form-group"><input type="text" class="form-control form-control-user" id="rSchoolCode" placeholder="School Link/Code" required></div>
+                        <div class="form-group"><input type="text" class="form-control form-control-user" id="rUsername" placeholder="Username" required></div>
+                        <div class="form-group"><input type="password" class="form-control form-control-user" id="rPassword" placeholder="Password" required></div>
+                        <div class="form-group"><input type="text" class="form-control form-control-user" id="rName" placeholder="Full Name" required></div>
+                        <div class="form-group"><input type="email" class="form-control form-control-user" id="rEmail" placeholder="Email"></div>
+                        <div class="form-group"><input type="tel" class="form-control form-control-user" id="rPhone" placeholder="Phone"></div>
+                        <div class="form-group"><select class="form-control form-control-user" id="rRole"><option value="STUDENT">Student</option><option value="PARENT">Parent</option><option value="TEACHER">Teacher</option></select></div>
+                        <button class="btn btn-success btn-user btn-block">Register Account</button>
+                      </form>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="text-center"><a class="small" href="javascript:void(0)" onclick="devLogin()">Developer Quick Login</a></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.1.4/js/sb-admin-2.min.js"></script>
+  <script src="app.js"></script>
+  <script>
+    function devLogin() { lUsername.value='ampeiretech@gmail.com'; lPassword.value='ampeiretech@16'; lSchoolCode.value=''; }
+    document.getElementById('loginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      try {
+        const res = await fetch('/api/auth/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ username: lUsername.value, password: lPassword.value, school_code: lSchoolCode.value }) });
+        const data = await res.json(); if (!res.ok) throw new Error(data.error);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        window.location.href = `${data.user.role}.html`;
+      } catch (err) { alert(err.message); }
+    });
+    document.getElementById('regForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      try {
+        const res = await fetch('/api/auth/register', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ school_code: rSchoolCode.value, username: rUsername.value, password: rPassword.value, name: rName.value, email: rEmail.value, phone_number: rPhone.value, role: rRole.value }) });
+        const data = await res.json(); if (!res.ok) throw new Error(data.error);
+        alert('Registered! Please login.');
+        $('.nav-pills a[href="#login"]').tab('show');
+      } catch (err) { alert(err.message); }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>SCHOOLAR HUB UG - Student</title>
+  <link href="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.1.4/css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+  <div id="wrapper">
+    <ul class="navbar-nav bg-gradient-success sidebar sidebar-dark accordion" id="accordionSidebar">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="student.html">
+        <div class="sidebar-brand-icon"><i class="fas fa-graduation-cap"></i></div>
+        <div class="sidebar-brand-text mx-3">Student</div>
+      </a>
+      <hr class="sidebar-divider my-0">
+      <li class="nav-item active"><a class="nav-link" href="student.html"><i class="fas fa-fw fa-book"></i><span>Quizzes</span></a></li>
+    </ul>
+    <div id="content-wrapper" class="d-flex flex-column">
+      <div id="content">
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Student</span>
+                <i class="fas fa-user-circle fa-lg"></i>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
+                <a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Logout</a>
+              </div>
+            </li>
+          </ul>
+        </nav>
+        <div class="container-fluid">
+          <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Play Wallet</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="play">UGX 0</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-gamepad fa-2x text-gray-300"></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Savings</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="sav">UGX 0</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-piggy-bank fa-2x text-gray-300"></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Class Rank</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="rank">N/A</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-trophy fa-2x text-gray-300"></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-8">
+              <div id="dashView">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                  <h1 class="h3 mb-0 text-gray-800">Available Quizzes</h1>
+                  <button class="btn btn-sm btn-outline-secondary" onclick="downloadCSV('transactions')"><i class="fas fa-download"></i> Statement</button>
+                </div>
+                <div id="quizList" class="list-group"></div>
+              </div>
+              
+              <div id="quizView" class="d-none">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                  <h1 class="h3 mb-0 text-gray-800" id="qTitle">Quiz Started</h1>
+                  <div class="h3 text-danger">Time Left: <strong id="timer">5</strong>s</div>
+                </div>
+                <div id="qContainer"></div>
+              </div>
+              
+              <div id="resView" class="d-none">
+                <div class="card shadow text-center p-5">
+                  <h1 id="resTitle"></h1>
+                  <p id="resScore" class="lead"></p>
+                  <button class="btn btn-primary mt-3" onclick="back()">Back to Dashboard</button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-lg-4">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Class Leaderboard</h6>
+                </div>
+                <div class="card-body" id="leaderboardBody">
+                  Loading...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="app.js"></script>
+  <script>
+    const u = JSON.parse(localStorage.getItem('user')); if (!u || u.role !== 'STUDENT') window.location.href = 'index.html';
+    let attemptId = null, questions = [], timePerQ = 5, timer = null, qIndex = 0, answers = [];
+    
+    async function init() {
+      const w = await fetch('/api/quiz/wallet',{headers:{'x-user-id':u.id}}).then(r=>r.json());
+      play.innerText = `UGX ${(w.play_balance||0).toLocaleString()}`; 
+      sav.innerText = `UGX ${(w.savings_balance||0).toLocaleString()}`;
+      
+      const q = await fetch('/api/quiz/quizzes',{headers:{'x-user-id':u.id}}).then(r=>r.json());
+      quizList.innerHTML = q.map(x=>`<div class="list-group-item list-group-item-action d-flex justify-content-between"> <div><strong>${x.title}</strong><br><small>${x.subject_name} - ${x.topic||'General'}</small></div> <button class="btn btn-sm btn-success align-self-center" onclick="start(${x.id})">Stake 1000 & Start</button></div>`).join('');
+      
+      loadLeaderboard();
+    }
+
+    async function loadLeaderboard() {
+      const res = await fetch('/api/quiz/leaderboard', { headers: { 'x-user-id': u.id } });
+      const d = await res.json();
+      rank.innerText = `#${d.rank} / ${d.total_students}`;
+      let html = `<ul class="list-group">`;
+      d.leaderboard.forEach((s, i) => {
+        html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+          <span><i class="fas fa-medal text-warning mr-2"></i> ${s.name}</span>
+          <span class="badge badge-primary badge-pill">${parseFloat(s.avg_score || 0).toFixed(1)}%</span>
+        </li>`;
+      });
+      html += '</ul>';
+      document.getElementById('leaderboardBody').innerHTML = html;
+    }
+
+    async function start(id) {
+      try {
+        const d = await fetch(`/api/quiz/quizzes/${id}/start`, {method:'POST', headers:{'x-user-id':u.id,'Content-Type':'application/json'}, body:JSON.stringify({stake:1000})});
+        const r = await d.json(); if(!d.ok) throw new Error(r.error);
+        attemptId = r.attemptId; questions = r.questions; timePerQ = r.timePerQ; qIndex = 0; answers = [];
+        dashView.classList.add('d-none'); quizView.classList.remove('d-none');
+        renderQ();
+      } catch(e) { alert(e.message); }
+    }
+    function renderQ() {
+      if (qIndex >= questions.length) return submit();
+      const q = questions[qIndex];
+      qContainer.innerHTML = `<div class="card shadow mb-4"><div class="card-body"><h6>${qIndex+1}. ${q.text}</h6><div class="option-card" data-o="A" onclick="sel(this,'A')">A. ${q.option_a}</div><div class="option-card" data-o="B" onclick="sel(this,'B')">B. ${q.option_b}</div><div class="option-card" data-o="C" onclick="sel(this,'C')">C. ${q.option_c}</div><div class="option-card" data-o="D" onclick="sel(this,'D')">D. ${q.option_d}</div></div></div>`;
+      let t = timePerQ; timer.innerText = t;
+      clearInterval(window.tInt); 
+      window.tInt = setInterval(() => { 
+        t--; timer.innerText = t; 
+        if(t<=0) { clearInterval(window.tInt); answers.push(null); qIndex++; renderQ(); } 
+      }, 1000);
+    }
+    function sel(el, ans) { 
+      document.querySelectorAll('.option-card').forEach(x=>x.classList.remove('selected')); 
+      el.classList.add('selected'); 
+      clearInterval(window.tInt); 
+      answers.push(ans); 
+      qIndex++; 
+      setTimeout(renderQ, 300); 
+    }
+    async function submit() {
+      clearInterval(window.tInt);
+      quizView.classList.add('d-none'); resView.classList.remove('d-none');
+      const r = await fetch(`/api/quiz/attempts/${attemptId}/submit`, {method:'POST', headers:{'x-user-id':u.id,'Content-Type':'application/json'}, body:JSON.stringify({answers})}).then(r=>r.json());
+      resTitle.innerText = r.score >= 30 ? '🎉 Passed!' : '🏦 Stake Saved';
+      resScore.innerText = `You scored ${r.score}%.`;
+    }
+    function back() { resView.classList.add('d-none'); dashView.classList.remove('d-none'); init(); }
+    init();
+  </script>
+</body>
+</html>

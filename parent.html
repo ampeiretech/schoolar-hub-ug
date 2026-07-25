@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>SCHOOLAR HUB UG - Parent</title>
+  <link href="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.1.4/css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+  <div id="wrapper">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="parent.html">
+        <div class="sidebar-brand-icon"><i class="fas fa-users"></i></div>
+        <div class="sidebar-brand-text mx-3">Parent</div>
+      </a>
+      <hr class="sidebar-divider my-0">
+      <li class="nav-item active"><a class="nav-link" href="parent.html"><i class="fas fa-fw fa-wallet"></i><span>Finances</span></a></li>
+    </ul>
+    <div id="content-wrapper" class="d-flex flex-column">
+      <div id="content">
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Parent</span>
+                <i class="fas fa-user-circle fa-lg"></i>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
+                <a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Logout</a>
+              </div>
+            </li>
+          </ul>
+        </nav>
+        <div class="container-fluid">
+          <h1 class="h3 mb-4 text-gray-800">Family Dashboard</h1>
+          <div class="row">
+            <div class="col-lg-4">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Register Student</h6></div>
+                <div class="card-body">
+                  <input type="text" id="sName" class="form-control mb-2" placeholder="Student Name">
+                  <input type="text" id="sUser" class="form-control mb-2" placeholder="Username">
+                  <input type="password" id="sPass" class="form-control mb-2" placeholder="Password">
+                  <input type="email" id="sEmail" class="form-control mb-2" placeholder="Email">
+                  <input type="tel" id="sPhone" class="form-control mb-2" placeholder="Phone">
+                  <select id="sClass" class="form-control mb-3"></select>
+                  <button class="btn btn-primary btn-block" onclick="regStud()">Register</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Student Wallet & Funding</h6></div>
+                <div class="card-body">
+                  <select id="wStud" class="form-control mb-3" onchange="loadW()"></select>
+                  <div class="alert alert-success">Play: <strong id="play">UGX 0</strong></div>
+                  <div class="alert alert-info">Savings: <strong id="sav">UGX 0</strong></div>
+                  <input type="tel" id="depPhone" class="form-control mb-2" placeholder="MoMo Phone">
+                  <input type="number" id="depAmt" class="form-control mb-2" placeholder="Amount">
+                  <button class="btn btn-success btn-block mb-3" onclick="dep()">Fund Play Wallet</button>
+                  <input type="number" id="wAmt" class="form-control mb-2" placeholder="Amount">
+                  <button class="btn btn-info btn-block text-white" onclick="wd()">Withdraw Savings</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Class & Academic Progress</h6></div>
+                <div class="card-body">
+                  <select id="chClass" class="form-control mb-3" onchange="changeClass()"></select>
+                  <div id="progList" style="max-height:250px; overflow-y:auto;" class="small"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="app.js"></script>
+  <script>
+    const u = JSON.parse(localStorage.getItem('user')); if (!u || u.role !== 'PARENT') window.location.href = 'index.html';
+    async function init() {
+      const c = await fetch('/api/quiz/classes',{headers:{'x-user-id':u.id}}).then(r=>r.json());
+      sClass.innerHTML = c.map(x=>`<option value="${x.id}">${x.name}</option>`).join('');
+      chClass.innerHTML = c.map(x=>`<option value="${x.id}">${x.name}</option>`).join('');
+    }
+    async function regStud() {
+      await fetch('/api/quiz/students', {method:'POST', headers:{'x-user-id':u.id,'Content-Type':'application/json'}, body:JSON.stringify({name:sName.value, username:sUser.value, password:sPass.value, email:sEmail.value, phone_number:sPhone.value, class_id:sClass.value})});
+      alert('Student Registered!');
+    }
+    async function loadW() {
+      if(!wStud.value) return;
+      const w = await fetch(`/api/quiz/wallet/${wStud.value}`,{headers:{'x-user-id':u.id}}).then(r=>r.json());
+      play.innerText = `UGX ${(w.play_balance||0).toLocaleString()}`; 
+      sav.innerText = `UGX ${(w.savings_balance||0).toLocaleString()}`;
+      
+      const p = await fetch(`/api/quiz/students/${wStud.value}/progress`,{headers:{'x-user-id':u.id}}).then(r=>r.json());
+      progList.innerHTML = p.length ? p.map(x=>`<div class="border-bottom p-1 mb-1"><strong>${x.title}</strong> <small class="text-muted">(${x.topic})</small><br>Score: <span class="badge ${x.score_percentage >= 50 ? 'badge-success' : 'badge-danger'}">${x.score_percentage}%</span></div>`).join('') : '<p class="text-muted">No quizzes attempted yet.</p>';
+    }
+    async function dep() { 
+      await fetch('/api/payment/deposit', {method:'POST', headers:{'x-user-id':u.id,'Content-Type':'application/json'}, body:JSON.stringify({phone:depPhone.value, amount:parseFloat(depAmt.value), student_id:parseInt(wStud.value)})}); 
+      alert('Deposit prompt sent to phone.'); 
+    }
+    async function wd() { 
+      await fetch('/api/payment/withdraw', {method:'POST', headers:{'x-user-id':u.id,'Content-Type':'application/json'}, body:JSON.stringify({amount:parseFloat(wAmt.value), student_id:parseInt(wStud.value), wallet_type:'savings'})}); 
+      alert('Withdrawal requested!'); loadW(); 
+    }
+    async function changeClass() {
+      if(!wStud.value) return;
+      await fetch(`/api/quiz/students/${wStud.value}/class`, {method:'PUT', headers:{'x-user-id':u.id,'Content-Type':'application/json'}, body:JSON.stringify({class_id:chClass.value})});
+      alert('Class updated.');
+    }
+    init();
+  </script>
+</body>
+</html>

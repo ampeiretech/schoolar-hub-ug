@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>SCHOOLAR HUB UG - Dev</title>
+  <link href="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.1.4/css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+  <div id="wrapper">
+    <ul class="navbar-nav bg-gradient-dark sidebar sidebar-dark accordion" id="accordionSidebar">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dev.html">
+        <div class="sidebar-brand-icon"><i class="fas fa-tools"></i></div>
+        <div class="sidebar-brand-text mx-3">Dev Panel</div>
+      </a>
+      <hr class="sidebar-divider my-0">
+      <li class="nav-item active"><a class="nav-link" href="dev.html"><i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+    </ul>
+    <div id="content-wrapper" class="d-flex flex-column">
+      <div id="content">
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Super Dev</span>
+                <i class="fas fa-user-circle fa-lg"></i>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
+                <a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Logout</a>
+              </div>
+            </li>
+          </ul>
+        </nav>
+        <div class="container-fluid">
+          <h1 class="h3 mb-0 text-gray-800">Platform Overview</h1>
+          <br>
+          <div class="row">
+            <div class="col-xl-4 col-md-6 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Net Deposits</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="dep">UGX 0</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-dollar-sign fa-2x text-gray-300"></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-4 col-md-6 mb-4">
+              <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Dev Account Worth</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="fee">UGX 0</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-coins fa-2x text-gray-300"></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card shadow mb-4">
+            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Schools Management</h6></div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <thead><tr><th>Name</th><th>Code</th><th>Status</th><th>Actions</th></tr></thead>
+                  <tbody id="schBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="app.js"></script>
+  <script>
+    const u = JSON.parse(localStorage.getItem('user')); if (!u || u.role !== 'DEV') window.location.href = 'index.html';
+    async function load() {
+      const res = await fetch('/api/dev/overview', { headers: { 'x-user-id': u.id } });
+      const d = await res.json();
+      dep.innerText = `UGX ${(d.totals.deposits || 0).toLocaleString()}`;
+      fee.innerText = `UGX ${(d.totals.devFees || 0).toLocaleString()}`;
+      schBody.innerHTML = d.schools.map(s => `<tr><td>${s.name}</td><td>${s.code}</td><td>${s.approved?'<span class="badge badge-success">Approved</span>':'<span class="badge badge-danger">Pending</span>'}</td><td><button class="btn btn-sm btn-primary" onclick="ed(${s.id})">Edit</button> ${!s.approved?`<button class="btn btn-sm btn-success" onclick="ap(${s.id})">Approve</button>`:''}</td></tr>`).join('');
+    }
+    async function ap(id) { await fetch(`/api/dev/schools/${id}/approve`, { method:'POST', headers:{'x-user-id':u.id} }); load(); }
+    async function ed(id) {
+      const name = prompt('New School Name:'); const code = prompt('New Code:'); const email = prompt('Support Email:');
+      await fetch(`/api/dev/schools/${id}`, { method:'POST', headers:{'x-user-id':u.id, 'Content-Type':'application/json'}, body: JSON.stringify({name, code, support_email:email}) });
+      load();
+    }
+    load();
+  </script>
+</body>
+</html>

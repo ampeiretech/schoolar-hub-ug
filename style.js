@@ -1,0 +1,13 @@
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+.brand-logo { font-size: 3rem; line-height: 1; }
+.card { transition: transform .15s ease; }
+.card:hover { transform: translateY(-2px); }
+.btn-primary { background: #2563eb; border-color: #2563eb; }
+.btn-primary:hover { background: #1d4ed8; border-color: #1d4ed8; }
+.list-group-item { cursor: pointer; }
+.list-group-item:hover { background: #f1f5f9; }
+.option-card { border: 2px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; cursor: pointer; user-select: none; }
+.option-card:hover { border-color: #94a3b8; }
+.option-card.selected { border-color: #16a34a; background: #dcfce7; }
+.option-letter { display: inline-block; width: 28px; height: 28px; line-height: 26px; text-align: center; border-radius: 50%; background: #e2e8f0; font-weight: 700; margin-right: 10px; font-size: .85rem; }
+.option-card.selected .option-letter { background: #16a34a; color: white; }
